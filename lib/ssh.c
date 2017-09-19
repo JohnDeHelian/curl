@@ -1279,11 +1279,13 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
          * also, every command takes at least one argument so we get that
          * first argument right now
          */
-        if(strncasecompare(cmd, "rename ", 7)) {
-          result = get_realPathname(&cp, &sshc->quote_path1, &sshc->homedir);
+        if(strncasecompare(cmd, "chgrp ", 6) ||
+           strncasecompare(cmd, "chmod ", 6) ||
+           strncasecompare(cmd, "chown ", 6)) {
+          result = get_pathname(&cp, &sshc->quote_path1);
         }
         else {
-          result = get_pathname(&cp, &sshc->quote_path1);
+          result = get_realPathname(&cp, &sshc->quote_path1, &sshc->homedir);
         }
         if(result) {
           if(result == CURLE_OUT_OF_MEMORY)
@@ -1331,7 +1333,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
           /* symbolic linking */
           /* sshc->quote_path1 is the source */
           /* get the destination */
-          result = get_pathname(&cp, &sshc->quote_path2);
+          result = get_realPathname(&cp, &sshc->quote_path2, &sshc->homedir);
           if(result) {
             if(result == CURLE_OUT_OF_MEMORY)
               failf(data, "Out of memory");
