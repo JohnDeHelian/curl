@@ -1279,7 +1279,12 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
          * also, every command takes at least one argument so we get that
          * first argument right now
          */
-        result = get_realPathname(&cp, &sshc->quote_path1, &sshc->homedir);
+        if(strncasecompare(cmd, "rename ", 7)) {
+          result = get_realPathname(&cp, &sshc->quote_path1, &sshc->homedir);
+        }
+        else {
+          result = get_pathname(&cp, &sshc->quote_path1);
+        }
         if(result) {
           if(result == CURLE_OUT_OF_MEMORY)
             failf(data, "Out of memory");
@@ -1351,7 +1356,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
           /* rename file */
           /* first param is the source path */
           /* second param is the dest. path */
-           result = get_realPathname(&cp, &sshc->quote_path2, &sshc->homedir);
+          result = get_realPathname(&cp, &sshc->quote_path2, &sshc->homedir);
           if(result) {
             if(result == CURLE_OUT_OF_MEMORY)
               failf(data, "Out of memory");
@@ -1584,9 +1589,12 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
       }
       if(rc != 0 && !sshc->acceptfail) {
         err = sftp_libssh2_last_error(sshc->sftp_session);
+        failf(data, "rename command failed: %s Source Path: %s Dest Path %s",
+              sftp_libssh2_strerror(err),
+              sshc->quote_path1,
+              sshc->quote_path2);
         Curl_safefree(sshc->quote_path1);
         Curl_safefree(sshc->quote_path2);
-        failf(data, "rename command failed: %s", sftp_libssh2_strerror(err));
         state(conn, SSH_SFTP_CLOSE);
         sshc->nextstate = SSH_NO_STATE;
         sshc->actualcode = CURLE_QUOTE_ERROR;
@@ -3426,7 +3434,7 @@ static CURLcode get_realPathname(const char **cpp, char **path, char **pwd)
     quot = *cp++;
 
     /* Search for terminating quote, unescape some chars */
-    for(i = 0, j= strlen(*path); i <= strlen(cp); i++) {
+    for(i = 0, j = strlen(*path); i <= strlen(cp); i++) {
       if(cp[i] == quot) {  /* Found quote */
         i++;
         (*path)[j] = '\0';
