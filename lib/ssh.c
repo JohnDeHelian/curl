@@ -20,7 +20,7 @@
  *
  ***************************************************************************/
 
-#define CURL_LIBSSH2_DEBUG
+/* #define CURL_LIBSSH2_DEBUG */
 
 #include "curl_setup.h"
 
@@ -921,7 +921,6 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
       break;
 
     case SSH_AUTH_PASS_INIT:
-      infof(data, "Initializwe password authentication sshc->authlist -> [%s]\n", sshc->authlist);
       if((data->set.ssh_auth_types & CURLSSH_AUTH_PASSWORD) &&
          (strstr(sshc->authlist, "password") != NULL)) {
         state(conn, SSH_AUTH_PASS);
@@ -943,7 +942,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
       }
       if(rc == 0) {
         sshc->authed = TRUE;
-        infof(data, "Initialized password authentication User [%s] Pass [%s]\n", conn->user, conn->passwd);
+        infof(data, "Initialized password authentication\n");
         state(conn, SSH_AUTH_DONE);
       }
       else {
