@@ -3395,15 +3395,12 @@ get_pathname(const char **cpp, char **path, char **pwd)
     pathLength = 0;
     relativePath = (cp[0] == '/' && cp[1] == '~' && cp[2] == '/');
     /* Handling for relative path - prepend home directory */
-    if(cp[0] != '/' || relativePath) {
+    if(relativePath) {
       strcpy(*path, *pwd);
       pathLength = strlen(*pwd);
       (*path)[pathLength++] = '/';
       (*path)[pathLength] = '\0';
-      if(relativePath) {
-        /* remove /~/ from file name passed in */
-        cp += 3;
-      }
+      cp += 3;
     }
     // Copy path name up until first "white space"
     memcpy(&(*path)[pathLength], cp, (int)(end - cp));
