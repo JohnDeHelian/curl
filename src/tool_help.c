@@ -131,9 +131,9 @@ static const struct helptxt helptext[] = {
   {"    --false-start",
    "Enable TLS False Start"},
   {"-F, --form <name=content>",
-   "Specify HTTP multipart POST data"},
+   "Specify multipart MIME data"},
   {"    --form-string <name=string>",
-   "Specify HTTP multipart POST data"},
+   "Specify multipart MIME data"},
   {"    --ftp-account <data>",
    "Account data string"},
   {"    --ftp-alternative-to-user <command>",
@@ -499,11 +499,13 @@ static const struct feat feats[] = {
   {"NTLM_WB",        CURL_VERSION_NTLM_WB},
   {"SSL",            CURL_VERSION_SSL},
   {"libz",           CURL_VERSION_LIBZ},
+  {"brotli",         CURL_VERSION_BROTLI},
   {"CharConv",       CURL_VERSION_CONV},
   {"TLS-SRP",        CURL_VERSION_TLSAUTH_SRP},
   {"HTTP2",          CURL_VERSION_HTTP2},
   {"UnixSockets",    CURL_VERSION_UNIX_SOCKETS},
-  {"HTTPS-proxy",    CURL_VERSION_HTTPS_PROXY}
+  {"HTTPS-proxy",    CURL_VERSION_HTTPS_PROXY},
+  {"MultiSSL",       CURL_VERSION_MULTI_SSL}
 };
 
 void tool_help(void)
